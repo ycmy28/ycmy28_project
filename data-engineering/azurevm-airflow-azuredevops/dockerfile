@@ -1,0 +1,42 @@
+#FROM jupyterhub/jupyterhub:latest
+FROM python:3.8
+
+# Install Node.js
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs
+
+# Check if npm is installed, if not install it
+RUN if ! command -v npm &> /dev/null; then apt-get install -y npm; fi
+
+# Install configurable-http-proxy
+RUN npm install -g configurable-http-proxy
+
+# Update packages and install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    build-essential \
+    python3-dev \
+    nano \
+    vim
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN pip install --upgrade pip
+
+# Install JupyterHub, JupyterLab, and nativeauthenticator
+RUN pip install jupyterhub jupyterlab==3.0.0
+
+RUN pip install jupyterhub-nativeauthenticator
+# Set JupyterLab as the default interface
+ENV JUPYTERHUB_SINGLEUSER_APP="jupyter_server.serverapp.ServerApp"
+
+# Install DockerSpawner
+RUN pip install dockerspawner netifaces
+
+# Expose port (optional, for documentation)
+EXPOSE 8000
+
+# Debugging message
+RUN echo "Starting JupyterHub..." 

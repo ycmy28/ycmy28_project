@@ -1,0 +1,40 @@
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+strategy:
+  matrix:
+    Python38:
+      python.version: '3.8'
+
+variables:
+- group: azure_devops_key
+
+steps:
+- task: InstallSSHKey@0
+  displayName: 'Install SSH key'
+  inputs:
+    knownHostsEntry: $(known_hosts)
+    sshPublicKey: $(ssh_public_key)
+    sshKeySecureFile: 'azure_devops_key'
+
+- script: |
+    echo "start to make SSH connection"
+    mkdir -p /home/vsts/.ssh
+    echo "$(SSH_PRIVATE_KEY)"
+    echo "$(SSH_PRIVATE_KEY)" > /home/vsts/.ssh/id_rsa
+    chmod 600 /home/vsts/.ssh/id_rsa
+    ssh-keyscan -H 20.24.154.126 >> /home/vsts/.ssh/known_hosts
+    echo "end of SSH creation dari sini"
+  env:
+    SSH_PRIVATE_KEY: $(SSH_PRIVATE_KEY)
+  displayName: 'Set up SSH Key and Add VM to known_hosts'
+
+- script: echo "Starting CI/CD pipeline for Airflow DAGs sync"
+  displayName: 'Pipeline Initialization'
+
+- script: |
+    ssh -i /home/vsts/.ssh/@ '/home/update_dags.sh'
+  displayName: 'Sync DAGs to Airflow VM'
