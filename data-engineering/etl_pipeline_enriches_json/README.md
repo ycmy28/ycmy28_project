@@ -41,28 +41,32 @@ In modern ETL you often need to augment datasets with third‑party geocoding. T
    git clone https://github.com/ycmy28/ycmy28_project.git
 
 2. **Bring up Airflow infra**  
-   ```initialize DB & create admin user
-    docker compose up airflow-init
+   ```bash
+   initialize DB & create admin user
+   docker compose up airflow-init
 
-    ```initialize DB & create admin user
-    docker compose up -d
+   initialize DB & create admin user
+   docker compose up -d
 
 3. **Configure Airflow Variable**  
-   ```In the Airflow UI (http://localhost:8080 → Admin → Variables), add:
+   ```
+   In the Airflow UI (http://localhost:8080 → Admin → Variables), add:
     Key:   LOCATIONIQ_KEY
     Value: pk.your_actual_key_here
 
 4. **Running Unit Tests**  
-   ```# optional: start Postgres & Redis, if not already running
+   ```
+   optional: start Postgres & Redis, if not already running
     docker compose up -d postgres redis
 
-    ```# run tests in a temporary container
+    run tests in a temporary container
     docker compose run --rm pytest
 
-Cleanup:
-docker compose down --volumes --rmi all
+**Clean Up** 
+```docker compose down --volumes --rmi all
 
 ## Project Structure
+```
 etl_pipeline_enriches_json/
 ├── dags/
 │   └── geocode_pipeline.py       # Airflow DAG
