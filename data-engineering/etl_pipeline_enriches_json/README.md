@@ -66,9 +66,8 @@ In modern ETL you often need to augment datasets with third‑party geocoding. T
    ```
    docker compose down --volumes --rmi all
 
-
----
 ```
+---
 
 ## Project Structure
 
