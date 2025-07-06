@@ -63,7 +63,12 @@ In modern ETL you often need to augment datasets with third‑party geocoding. T
     docker compose run --rm pytest
 
 **Clean Up** 
-```docker compose down --volumes --rmi all
+   ```
+   docker compose down --volumes --rmi all
+
+
+---
+```
 
 ## Project Structure
 
@@ -99,7 +104,7 @@ etl_pipeline_enriches_json/
 ├── setup.py                      # for `pip install -e .`
 └── docker-compose.yml            # service definitions
 
-
+```
 ## License
 
 This project is open-sourced under the [MIT License](LICENSE).
