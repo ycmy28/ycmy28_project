@@ -66,7 +66,10 @@ In modern ETL you often need to augment datasets with third‑party geocoding. T
 ```docker compose down --volumes --rmi all
 
 ## Project Structure
-```
+
+
+```text
+.  
 etl_pipeline_enriches_json/
 ├── dags/
 │   └── geocode_pipeline.py       # Airflow DAG
