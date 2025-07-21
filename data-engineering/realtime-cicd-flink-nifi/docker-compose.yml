@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  flink-jobmanager:
+    image: flink:1.17.1-scala_2.12
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    restart: unless-stopped
+
+  flink-taskmanager:
+    image: flink:1.17.1-scala_2.12
+    container_name: flink-taskmanager
+    depends_on:
+      - flink-jobmanager
+    command: taskmanager
+    restart: unless-stopped
+
+  nifi:
+    image: apache/nifi:1.24.0
+    container_name: nifi
+    ports:
+      - "8080:8080"
+    environment:
+      - NIFI_WEB_HTTP_PORT=8080
+    restart: unless-stopped

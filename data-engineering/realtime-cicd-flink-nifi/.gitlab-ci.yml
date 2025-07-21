@@ -1,0 +1,61 @@
+stages:
+  - build
+  - test
+  - deploy_dev
+  - deploy_prod
+
+variables:
+  FLINK_HOST_DEV: "http://flink-dev.example.com:8081"
+  NIFI_HOST_DEV: "http://nifi-dev.example.com:8080"
+  FLINK_HOST_PROD: "http://flink-prod.example.com:8081"
+  NIFI_HOST_PROD: "http://nifi-prod.example.com:8080"
+
+before_script:
+  - echo "Setting up environment..."
+  - chmod +x deploy/deploy-*.sh
+  - chmod +x nifi-flow/deploy-nifi.sh
+
+build_flink:
+  stage: build
+  script:
+    - echo "Building Flink job..."
+    - cd flink-job
+    - |
+      if [ -f pom.xml ]; then
+        mvn clean package
+      elif [ -f requirements.txt ]; then
+        pip install -r requirements.txt
+      fi
+
+test_flink:
+  stage: test
+  script:
+    - echo "Running Flink unit tests..."
+    - cd flink-job
+    - |
+      if [ -f pom.xml ]; then
+        mvn test
+      elif [ -f requirements.txt ]; then
+        pytest test/
+      fi
+
+test_nifi:
+  stage: test
+  script:
+    - echo "Validating NiFi flow template..."
+    - cat nifi-flow/flow-template.json | jq .
+
+deploy_dev:
+  stage: deploy_dev
+  script:
+    - echo "Deploying to DEV environment..."
+    - ./deploy/deploy-flink.sh $FLINK_HOST_DEV
+    - ./nifi-flow/deploy-nifi.sh $NIFI_HOST_DEV
+
+deploy_prod:
+  stage: deploy_prod
+  when: manual
+  script:
+    - echo "Deploying to PROD environment..."
+    - ./deploy/deploy-flink.sh $FLINK_HOST_PROD
+    - ./nifi-flow/deploy-nifi.sh $NIFI_HOST_PROD

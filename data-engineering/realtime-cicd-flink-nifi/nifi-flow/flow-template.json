@@ -1,0 +1,8 @@
+{
+    "template": {
+      "name": "example",
+      "description": "Example NiFi Template",
+      "snippet": {}
+    }
+  }
+  

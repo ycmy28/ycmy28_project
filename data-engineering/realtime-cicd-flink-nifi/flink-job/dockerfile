@@ -1,0 +1,12 @@
+FROM apache/flink:1.15.0-scala_2.12
+
+# Install Python & dependencies
+RUN apt-get update && apt-get install -y python3-pip && \
+    pip3 install apache-flink==1.15.0 pytest
+
+# Copy job files
+COPY . /app
+WORKDIR /app
+
+# Default command (for testing)
+CMD ["python3", "main.py"]
